@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Address</title>
+    <script>
+        function confirmUpdate() {
+            return confirm("Are you sure you want to save the changes?");
+        }
+    </script>
+</head>
+<body>
+    <h1>Update Address</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" onsubmit="return confirmUpdate();">
+        {% csrf_token %}
+        <label for="region">Region:</label>
+        <input type="text" name="region" value="{{ address.region }}" required>
+
+        <label for="categories">Categories:</label>
+        <input type="text" name="categories" value="{{ address.categories }}">
+
+        <label for="postal_dtdc">Postal/Dynamic DTDC:</label>
+        <input type="text" name="postal_dtdc" value="{{ address.postal_dtdc }}">
+
+        <label for="person_name">Person Name:</label>
+        <input type="text" name="person_name" value="{{ address.person_name }}">
+
+        <label for="company_name">Company Name:</label>
+        <input type="text" name="company_name" value="{{ address.company_name }}">
+
+        <label for="address">Address:</label>
+        <textarea name="address" required>{{ address.address }}</textarea>
+
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" name="phone_number" value="{{ address.phone_number }}" required>
+
+        <label for="copies">Copies:</label>
+        <input type="number" name="copies" value="{{ address.copies }}">
+
+        <label for="receiver_name">Receiver Name:</label>
+        <input type="text" name="receiver_name" value="{{ address.receiver_name }}">
+
+        <label for="email_id">Email ID:</label>
+        <input type="email" name="email_id" value="{{ address.email_id }}">
+
+        <button type="submit">Update Address</button>
+    </form>
+    <a href="{% url 'address_list' %}">Cancel</a>  <!-- Adjust to your actual URL -->
+</body>
+</html>

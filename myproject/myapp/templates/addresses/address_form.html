@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create/Edit Address</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Create/Edit Address</h1>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form id="address-form" method="post" action="{% url 'address_list' %}">
+            {% csrf_token %}
+            <div>
+                <label for="s_no">S.No:</label>
+                <input type="number" id="s_no" name="s_no" required>
+            </div>
+
+            <div>
+                <label for="region">Region:</label>
+                <input type="text" id="region" name="region" value="{{ request.POST.region|default:'' }}" required>
+            </div>
+
+            <div>
+                <label for="categories">Categories:</label>
+                <select id="categories" name="categories" required>
+                    <option value="">--Select--</option>
+                    <option value="Association" {% if request.POST.categories == 'Association' %}selected{% endif %}>Association</option>
+                    <option value="Advertiser" {% if request.POST.categories == 'Advertiser' %}selected{% endif %}>Advertiser</option>
+                    <option value="Visitors" {% if request.POST.categories == 'Visitors' %}selected{% endif %}>Visitors</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="postal_dtdc">Postal / DTDC:</label>
+                <input type="text" id="postal_dtdc" name="postal_dtdc" value="{{ request.POST.postal_dtdc|default:'' }}" required>
+            </div>
+
+            <div>
+                <label for="person_name">Person Name:</label>
+                <input type="text" id="person_name" name="person_name" value="{{ request.POST.person_name|default:'' }}" required>
+            </div>
+
+            <div>
+                <label for="company_name">Company Name:</label>
+                <input type="text" id="company_name" name="company_name" value="{{ request.POST.company_name|default:'' }}">
+            </div>
+
+            <div>
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" required>{{ request.POST.address|default:'' }}</textarea>
+            </div>
+
+            <div>
+                <label for="phone_number">Phone Number:</label>
+                <input type="tel" id="phone_number" name="phone_number" pattern="[0-9]{10}" value="{{ request.POST.phone_number|default:'' }}" required>
+                <small>Format: 10-digit number</small>
+            </div>
+
+            <div>
+                <label for="receiver_name">Receiver Name:</label>
+                <input type="text" id="receiver_name" name="receiver_name" value="{{ request.POST.receiver_name|default:'' }}" required>
+            </div>
+
+            <div>
+                <label for="email_id">Email ID:</label>
+                <input type="email" id="email_id" name="email_id" value="{{ request.POST.email_id|default:'' }}" required>
+            </div>
+
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+
+        <a href="{% url 'address_list' %}" onclick="goBack()">Back to Address List</a>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

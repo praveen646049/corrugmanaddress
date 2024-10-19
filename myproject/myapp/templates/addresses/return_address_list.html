@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Address List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .verified {
+            background-color: green;
+            color: white;
+        }
+        .not-verified {
+            background-color: blue;
+            color: white;
+        }
+        .rejected {
+            background-color: red;
+            color: white;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Return Address List</h1>
+    <a href="{% url 'address_list' %}">Back to Address List</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Return Address</th>
+                <th>Correct Address</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if return_addresses %}
+                {% for address in return_addresses %}
+                <tr class="{% if address.status == 'verified' %}verified{% elif address.status == 'not_verified' %}not-verified{% elif address.status == 'rejected' %}rejected{% endif %}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ address.return_address }}</td>
+                    <td>{{ address.correct_address }}</td>
+                    <td>{{ address.reason }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">No return addresses found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient( #0e2ddf, #9dca83);  /* Bright gradient background */
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .card {
+            background: white;  /* Card background */
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);  /* Deeper shadow for depth */
+            padding: 40px;
+            text-align: center;
+            width: 350px;  /* Fixed width for the card */
+            z-index: 2;  /* Above the overlay */
+            position: relative;
+            overflow: hidden;  /* Clip inner elements */
+        }
+        .card h1 {
+            font-size: 2.5em;  /* Larger font size */
+            color: #FF1493;  /* Vibrant heading color */
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .card p {
+            font-size: 1.2em; 
+            color: #333;  /* Darker text color for readability */
+            margin-bottom: 25px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #e91a1a;  /* Button color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            position: relative;
+            overflow: hidden;  /* Clip inner elements */
+        }
+        button:hover {
+            background-color: #FF6F00;  /* Darker on hover */
+            transform: scale(1.05);  /* Slightly enlarge on hover */
+        }
+        button::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: transform 0.5s;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 0;  /* Behind the button text */
+        }
+        button:hover::after {
+            transform: translate(-50%, -50%) scale(1);  /* Ripple effect */
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Welcome!</h1>
+        <p>Join us </p>
+        <a href="{% url 'login' %}"><button>click here</button></a>
+    </div>
+</body>
+</html>
