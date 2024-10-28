@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if classified %}Update Classified{% else %}Create Classified{% endif %}</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background color */
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            background-color: rgb(176, 227, 243);
+        }
+        .form-container {
+            background-color: #ffffff; /* White background for the form box */
+            padding: 2rem; /* Padding inside the form box */
+            border-radius: 0.5rem; /* Rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+
+        }
+        .h1{
+            font-family: monospace;
+            
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="form-container">
+            <h1 class="mb-4 text-center">{% if classified %}Update Classified{% else %}Create Classified{% endif %}</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="customer_name">Customer Name:</label>
+                    <input type="text" class="form-control" id="customer_name" name="customer_name" value="{{ classified.customer_name|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="company_name">Company Name:</label>
+                    <input type="text" class="form-control" id="company_name" name="company_name" value="{{ classified.company_name|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="designation">Designation:</label>
+                    <input type="text" class="form-control" id="designation" name="designation" value="{{ classified.designation|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="edition">Edition:</label>
+                    <input type="text" class="form-control" id="edition" name="edition" value="{{ classified.edition|default:'' }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+            <a href="{% url 'classified_list' %}" class="btn btn-secondary mt-3 d-block text-center">Cancel</a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

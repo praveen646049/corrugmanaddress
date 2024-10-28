@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -79,11 +83,41 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'corrugmanaddress',
+        'USER': 'corrugmanuser',
+        'PASSWORD': 'corrugmanuser',
+        'HOST': 'corrugmanaddress.cd628e2uoalp.ap-south-1.rds.amazonaws.com',  # Or your database host
+        'PORT': '3306',       # Default MySQL port
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'corrugmanaddress',  # Your database name
+#         'USER': 'corrugmanuser',      # Your database user
+#         'PASSWORD': 'corrugmanuser',  # Your database password
+#         'HOST': 'localhost',           # Use 'localhost' for local connection
+#         'PORT': '5432',                # Default PostgreSQL port
+#     }
+# }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'corrugmanaddress',
+#         'USER': 'corrugmanuser',
+#         'PASSWORD': 'corrugmanuser',
+#         'HOST': 'localhost',
+#         'PORT': '5432', 
+#         'OPTIONS': {
+#             'sslmode': 'require',  # Add this if SSL is required
+#         },
+#            # or your db port
+#     }
+# }
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",  # Add your static files directory here
@@ -128,4 +162,9 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# settings.py
+
+
+
+
+

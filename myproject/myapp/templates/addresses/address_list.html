@@ -1,76 +1,4 @@
-<!-- <!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Address List</title>
-    <script>
-        function toggleSelectAll(source) {
-            const checkboxes = document.querySelectorAll('.address-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = source.checked;
-            });
-        }
-    </script>
-</head>
-<body>
-    <h1>Address List</h1>
-    <a href="{% url 'address_create' %}">Create New Address</a>
-    <a href="{% url 'logout' %}">Logout</a>
-
-    <form method="post">
-        {% csrf_token %}
-        <table>
-            <thead>
-                <tr>
-                    <th><input type="checkbox" onclick="toggleSelectAll(this)"></th>
-                    <th>S.No</th>
-                    <th>Region</th>
-                    <th>Categories</th>
-                    <th>Postal / DTDC</th>
-                    <th>Person Name</th>
-                    <th>Company Name</th>
-                    <th>Address</th>
-                    <th>Phone Number</th>
-                    <th>Receiver Name</th>
-                    <th>Email ID</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for address in addresses %}
-                <tr>
-                    <td><input type="checkbox" class="address-checkbox" name="selected_addresses" value="{{ address.pk }}"></td>
-                    <td>{{ address.s_no }}</td>
-                    <td>{{ address.region }}</td>
-                    <td>{{ address.categories }}</td>
-                    <td>{{ address.postal_dtdc }}</td>
-                    <td>{{ address.person_name }}</td>
-                    <td>{{ address.company_name }}</td>
-                    <td>{{ address.address }}</td>
-                    <td>{{ address.phone_number }}</td>
-                    <td>{{ address.receiver_name }}</td>
-                    <td>{{ address.email_id }}</td>
-                    <td>
-                        <a href="{% url 'address_update' address.pk %}">Edit</a>
-                        {% if user.is_superuser %}
-                        <a href="{% url 'address_delete' address.pk %}">Delete</a>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-
-      <button type="submit" formaction="{% url 'download_word' %}">Download Selected as Word</button>
-    </form>
-    
-    <a href="{% url 'print_address_list' %}" class="download-button">Print Address List</a>
-</body>
-</html> -->
-
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -85,50 +13,226 @@
         }
     </script>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e8f0f2; /* Light background */
+            color: #333; /* Dark text */
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+        header {
+            background-color: #003366; /* Dark blue */
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
-        th {
-            background-color: #f2f2f2;
+        .header-title {
+            font-size: 2.5em;
+            color: #ffffff; /* White for contrast */
+            margin: 0;
+            text-transform: uppercase; /* Make heading uppercase */
+            letter-spacing: 2px; /* Increase spacing between letters */
+        }
+        .header-subtitle {
+            font-size: 1.2em;
+            color: #e0e0e0; /* Slightly lighter gray */
+            margin: 5px 0 0;
+        }
+        nav {
+    display: flex;
+    justify-content: space-around; /* Creates space between items */
+    align-items: center; /* Centers items vertically */
+    background-color: #001e33; /* Darker blue base */
+    padding: 15px 30px;
+    position: relative; /* To position the animated background */
+    overflow: hidden; /* Hides overflow */
+    border-radius: 20px; /* Rounded edges */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Strong shadow for depth */
+}
+
+nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(270deg, #004080, #00509e, #007acc); /* Animated gradient */
+    z-index: 0; /* Behind the links */
+    opacity: 0.4; /* Slight transparency */
+    animation: gradientAnimation 6s ease infinite; /* Animation for background */
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+nav a {
+    font-family: monospace;
+    color: #fff; /* White text for contrast */
+    padding: 12px 25px;
+    margin: 0 15px;
+    text-decoration: none;
+    border-radius: 25px; /* Rounded buttons */
+    position: relative; /* For the hover effect */
+    overflow: hidden; /* Hides overflow */
+    transition: color 0.3s, transform 0.3s; /* Smooth transitions */
+    font-size: 16px; /* Font size */
+    text-transform: uppercase; /* Uppercase text for style */
+    font-weight: bold; /* Bold text for emphasis */
+}
+
+nav a::before {
+    content: '';
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    width: 300%; /* Start larger */
+    height: 300%; /* Start larger */
+    background: rgba(255, 255, 255, 0.1); /* Light overlay */
+    border-radius: 50%; /* Circular effect */
+    transform: translate(-50%, -50%) scale(0); /* Initially hidden */
+    transition: transform 0.3s; /* Smooth scaling */
+    z-index: 0; /* Behind the text */
+}
+
+nav a:hover::before {
+    transform: translate(-50%, -50%) scale(1); /* Expand on hover */
+}
+
+nav a:hover {
+    color: #49abd8; /* Gold color on hover */
+    transform: scale(1.1); /* Slightly increase size on hover */
+}
+
+nav a.active {
+    background: linear-gradient(90deg, #007acc, #00509e); /* Gradient for active link */
+    color: #fff; /* Ensure active link text is visible */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* Glow effect for active */
+}
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .search-container select, 
+        .search-container input,
+        .search-container button {
+            padding: 10px;
+            margin: 0 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+        .search-container select:focus, 
+        .search-container input:focus {
+            border-color: #004080; /* Focus border color */
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .total-copies {
+            margin-right: 20px;
         }
         .download-button {
-            margin-top: 20px;
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #007BFF;
+            padding: 10px 20px;
+            background-color: #003366; /* Dark blue */
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            margin: 0 5px;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+        .download-button:hover {
+            background-color: #004080; /* Lighter blue on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(0, 80, 158, 0.5); /* Blueish glow */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            background-color: #ffffff; /* White for table */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            transition: background-color 0.3s; /* Animation on background */
+        }
+        th {
+            background-color: #004080; /* Darker blue for header */
+            color: #ffffff; /* White text */
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #e6f7ff; /* Light blue on hover */
+        }
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pagination a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #003366; /* Dark blue */
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .pagination a:hover {
+            background-color: #e6f7ff; /* Light blue */
+            transform: scale(1.05); /* Slight zoom effect */
         }
     </style>
 </head>
 <body>
-    <h1>Address List</h1>
-    <a href="{% url 'address_create' %}">Create New Address</a>
-    <a href="{% url 'logout' %}">Logout</a>
+    <nav>
+        <a href="{% url 'welcome' %}" class="active">Home</a>
+        <a href="{% url 'address_list' %}">Address List</a>
+        <a href="{% url 'return_address_list' %}">Return Address List</a>
+        <a href="{% url 'monthly_copies_summary' %}">Magazine Summary List</a>
+        <a href="{% url 'magazine_details' %}">magazine details</a>
+        <a href="{% url 'create_address_history' %}">history</a>
+       
+        <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+   
+<div class="search-container">
+        <form method="get" action="">
+            <select name="field">
+                <option value="s_no" {% if request.GET.field == 's_no' %}selected{% endif %}>S.No</option>
+                <option value="region" {% if request.GET.field == 'region' %}selected{% endif %}>Region</option>
+                <option value="categories" {% if request.GET.field == 'categories' %}selected{% endif %}>Categories</option>
+                <option value="company_name" {% if request.GET.field == 'company_name' %}selected{% endif %}>Company Name</option>
+                <option value="postal_dtdc" {% if request.GET.field == 'postal_dtdc' %}selected{% endif %}>Postal / DTDC</option>
+                <option value="person_name" {% if request.GET.field == 'person_name' %}selected{% endif %}>Person Name</option>
+                <option value="address" {% if request.GET.field == 'address' %}selected{% endif %}>Address</option>
+                <option value="phone_number" {% if request.GET.field == 'phone_number' %}selected{% endif %}>Phone Number</option>
+                <option value="email_id" {% if request.GET.field == 'email_id' %}selected{% endif %}>Email ID</option>
+            </select>
+            <input type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}">
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
-    <form method="get" action="">
-        <select name="field">
-            <option value="s_no">s.no</option>
-            <option value="region">Region</option>
-            <option value="categories">Categories</option>
-            <option value="company_name">Company Name</option>
-            <option value="postal_dtdc">Postal / DTDC</option>
-            <option value="person_name">Person Name</option>
-            <option value="address">Address</option>
-            <option value="phone_number">Phone number</option>
-            <option value="email_id">Email id</option>
-        
-           
-        <input type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}">
-        <button type="submit">Search</button>
-    </form>
+    <div class="button-container">
+        <div class="total-copies">
+            <strong>Total Copies: </strong> {{ total_copies }}
+        </div>
+        <a href="{% url 'address_create' %}" class="download-button">Create New Address</a> <!-- Added button -->
+        <a href="{% url 'download_word' %}" class="download-button">download word</a>
+        <a href="{% url 'print_address_list' %}" class="download-button">Print Address List</a>
+        <a href="{% url 'import_form' %}" class="download-button">Import Form</a>
+    </div>
 
     <form method="post">
         {% csrf_token %}
@@ -144,6 +248,7 @@
                     <th>Company Name</th>
                     <th>Address</th>
                     <th>Phone Number</th>
+                    <th>Copies</th>
                     <th>Receiver Name</th>
                     <th>Email ID</th>
                     <th>Actions</th>
@@ -162,141 +267,7 @@
                         <td>{{ address.company_name }}</td>
                         <td>{{ address.address }}</td>
                         <td>{{ address.phone_number }}</td>
-                        <td>{{ address.receiver_name }}</td>
-                        <td>{{ address.email_id }}</td>
-                        <td>
-                            <a href="{% url 'address_update' address.pk %}">Edit</a>
-                            {% if user.is_superuser %}
-                            <a href="{% url 'address_delete' address.pk %}">Delete</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="12">No addresses found.</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-        
-        <button type="submit" formaction="{% url 'download_word' %}">Download Selected as Word</button>
-    </form>
-    
-    <a href="{% url 'print_address_list' %}" class="download-button">Print Address List</a>
-
-    <a href="{% url 'import_form' %}">Import form</a>
-
-    Optional: Pagination Controls --> 
-     <!-- <div>
-        {% if addresses.has_previous %}
-            <a href="?page=1&field={{ request.GET.field }}&search={{ request.GET.search }}">First</a>
-            <a href="?page={{ addresses.previous_page_number }}&field={{ request.GET.field }}&search={{ request.GET.search }}">Previous</a>
-        {% endif %}
-        <span>Page {{ addresses.number }} of {{ addresses.paginator.num_pages }}</span>
-        {% if addresses.has_next %}
-            <a href="?page={{ addresses.next_page_number }}&field={{ request.GET.field }}&search={{ request.GET.search }}">Next</a>
-            <a href="?page={{ addresses.paginator.num_pages }}&field={{ request.GET.field }}&search={{ request.GET.search }}">Last</a>
-        {% endif %}
-    </div>
-</body>
-</html> --> 
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Address List</title>
-    <script>
-        function toggleSelectAll(source) {
-            const checkboxes = document.querySelectorAll('.address-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = source.checked;
-            });
-        }
-    </script>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .download-button {
-            margin-top: 20px;
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Address List</h1>
-    <a href="{% url 'address_create' %}">Create New Address</a>
-    <a href="{% url 'logout' %}">Logout</a>
-
-    <form method="get" action="">
-        <select name="field">
-            <option value="s_no">s.no</option>
-            <option value="region">Region</option>
-            <option value="categories">Categories</option>
-            <option value="company_name">Company Name</option>
-            <option value="postal_dtdc">Postal / DTDC</option>
-            <option value="person_name">Person Name</option>
-            <option value="address">Address</option>
-            <option value="phone_number">Phone number</option>
-            <option value="email_id">Email id</option>
-        </select>
-        <input type="text" name="search" placeholder="Search..." value="{{ request.GET.search }}">
-        <button type="submit">Search</button>
-    </form>
-
-    <form method="post">
-        {% csrf_token %}
-        <table>
-            <thead>
-                <tr>
-                    <th><input type="checkbox" onclick="toggleSelectAll(this)"></th>
-                    <th>S.No</th>
-                    <th>Region</th>
-                    <th>Categories</th>
-                    <th>Postal / DTDC</th>
-                    <th>Person Name</th>
-                    <th>Company Name</th>
-                    <th>Address</th>
-                    <th>Phone Number</th>
-                    <th>Receiver Name</th>
-                    <th>Email ID</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                
-                {% if addresses %}
-                    {% for address in addresses %}
-                    <tr>
-                        
-                        <td><input type="checkbox" class="address-checkbox" name="selected_addresses" value="{{ address.pk }}"></td>
-                        <td>{{ address.s_no }}</td>
-                        <!-- <td>{{ forloop.counter }}</td> -->
-                        <td>{{ address.region }}</td>
-                        <td>{{ address.categories }}</td>
-                        <td>{{ address.postal_dtdc }}</td>
-                        <td>{{ address.person_name }}</td>
-                        <td>{{ address.company_name }}</td>
-                        <td>{{ address.address }}</td>
-                        <td>{{ address.phone_number }}</td>
+                        <td>{{ address.copies }}</td>
                         <td>{{ address.receiver_name }}</td>
                         <td>{{ address.email_id }}</td>
                         <td>
@@ -309,26 +280,18 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="12">No addresses found.</td>
+                        <td colspan="13">No addresses found.</td>
                     </tr>
                 {% endif %}
             </tbody>
         </table>
-        
-        <button type="submit" formaction="{% url 'download_word' %}">Download Selected as Word</button>
     </form>
-    
-    <a href="{% url 'print_address_list' %}" class="download-button">Print Address List</a>
-    <a href="{% url 'import_form' %}">Import form</a>
-    <a href="{% url 'return_address_list' %}">return address</a>
-<!-- 
-    Optional: Pagination Controls -->  -->
-    <div>
+
+    <div class="pagination">
         {% if addresses.has_previous %}
             <a href="?page=1&field={{ request.GET.field }}&search={{ request.GET.search }}">First</a>
             <a href="?page={{ addresses.previous_page_number }}&field={{ request.GET.field }}&search={{ request.GET.search }}">Previous</a>
         {% endif %}
-        <span>Page {{ addresses.number }} of {{ addresses.paginator.num_pages }}</span>
         {% if addresses.has_next %}
             <a href="?page={{ addresses.next_page_number }}&field={{ request.GET.field }}&search={{ request.GET.search }}">Next</a>
             <a href="?page={{ addresses.paginator.num_pages }}&field={{ request.GET.field }}&search={{ request.GET.search }}">Last</a>
@@ -336,4 +299,3 @@
     </div>
 </body>
 </html>
- 

@@ -4,7 +4,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from .models import Address
-from .models import ReturnAddress
 from django.contrib import messages
 from django.template import Context
 from django.template.loader import get_template
@@ -18,82 +17,258 @@ import time
 from django.contrib.auth import login
 from django.db import OperationalError
 import logging
+from django.core.mail import send_mail
 import html 
+from .models import MonthlyCopiesSummary, AddressRecord
+from .models import Address, AddressRecord, AddressHistory, AddressRecordHistory, MonthlyCopiesSummary  # Import your models
+from django.contrib.auth.models import User  # If you need to log the user actions
+from django.db.models import Sum
+
+import os
+import shutil
+from django.conf import settings
+
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.contrib import messages
+import os
+import shutil
+from datetime import datetime
+from django.conf import settings
+from django.shortcuts import redirect
+from django.contrib import messages
+from .utils import backup_database
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+# Corrected to send_email
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Professional, Classified, Expert, Customer, Interview
+
+# Professional Views
+def professional_list(request):
+    professionals = Professional.objects.all()
+    return render(request, 'professional_list.html', {'professionals': professionals})
+
+def professional_create(request):
+    if request.method == 'POST':
+        customer_name = request.POST.get('customer_name')
+        company_name = request.POST.get('company_name')
+        designation = request.POST.get('designation')
+        edition = request.POST.get('edition')
+        Professional.objects.create(
+            customer_name=customer_name,
+            company_name=company_name,
+            designation=designation,
+            edition=edition
+        )
+        return redirect('professional_list')
+    return render(request, 'professional_form.html')
+
+def professional_update(request, pk):
+    professional = get_object_or_404(Professional, pk=pk)
+    if request.method == 'POST':
+        professional.customer_name = request.POST.get('customer_name')
+        professional.company_name = request.POST.get('company_name')
+        professional.designation = request.POST.get('designation')
+        professional.edition = request.POST.get('edition')
+        professional.save()
+        return redirect('professional_list')
+    return render(request, 'professional_form.html', {'professional': professional})
+
+def professional_delete(request, pk):
+    professional = get_object_or_404(Professional, pk=pk)
+    if request.method == 'POST':
+        professional.delete()
+        return redirect('professional_list')
+    return render(request, 'professional_confirm_delete.html', {'professional': professional})
+
+# Classified Views
+def classified_list(request):
+    classifieds = Classified.objects.all()
+    return render(request, 'classified_list.html', {'classifieds': classifieds})
+
+def classified_create(request):
+    if request.method == 'POST':
+        customer_name = request.POST.get('customer_name')
+        company_name = request.POST.get('company_name')
+        designation = request.POST.get('designation')
+        edition = request.POST.get('edition')
+        Classified.objects.create(
+            customer_name=customer_name,
+            company_name=company_name,
+            designation=designation,
+            edition=edition
+        )
+        return redirect('classified_list')
+    return render(request, 'classified_form.html')
+
+def classified_update(request, pk):
+    classified = get_object_or_404(Classified, pk=pk)
+    if request.method == 'POST':
+        classified.customer_name = request.POST.get('customer_name')
+        classified.company_name = request.POST.get('company_name')
+        classified.designation = request.POST.get('designation')
+        classified.edition = request.POST.get('edition')
+        classified.save()
+        return redirect('classified_list')
+    return render(request, 'classified_form.html', {'classified': classified})
+
+def classified_delete(request, pk):
+    classified = get_object_or_404(Classified, pk=pk)
+    if request.method == 'POST':
+        classified.delete()
+        return redirect('classified_list')
+    return render(request, 'classified_confirm_delete.html', {'classified': classified})
+
+# Expert Views
+def expert_list(request):
+    experts = Expert.objects.all()
+    return render(request, 'expert_list.html', {'experts': experts})
+
+def expert_create(request):
+    if request.method == 'POST':
+        customer_name = request.POST.get('customer_name')
+        company_name = request.POST.get('company_name')
+        designation = request.POST.get('designation')
+        edition = request.POST.get('edition')
+        Expert.objects.create(
+            customer_name=customer_name,
+            company_name=company_name,
+            designation=designation,
+            edition=edition
+        )
+        return redirect('expert_list')
+    return render(request, 'expert_form.html')
+
+def expert_update(request, pk):
+    expert = get_object_or_404(Expert, pk=pk)
+    if request.method == 'POST':
+        expert.customer_name = request.POST.get('customer_name')
+        expert.company_name = request.POST.get('company_name')
+        expert.designation = request.POST.get('designation')
+        expert.edition = request.POST.get('edition')
+        expert.save()
+        return redirect('expert_list')
+    return render(request, 'expert_form.html', {'expert': expert})
+
+def expert_delete(request, pk):
+    expert = get_object_or_404(Expert, pk=pk)
+    if request.method == 'POST':
+        expert.delete()
+        return redirect('expert_list')
+    return render(request, 'expert_confirm_delete.html', {'expert': expert})
+
+# Customer Views
+def customer_list(request):
+    customers = Customer.objects.all()
+    return render(request, 'customer_list.html', {'customers': customers})
+
+def customer_create(request):
+    if request.method == 'POST':
+        customer_name = request.POST.get('customer_name')
+        company_name = request.POST.get('company_name')
+        designation = request.POST.get('designation')
+        edition = request.POST.get('edition')
+        Customer.objects.create(
+            customer_name=customer_name,
+            company_name=company_name,
+            designation=designation,
+            edition=edition
+        )
+        return redirect('customer_list')
+    return render(request, 'customer_form.html')
+
+def customer_update(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    if request.method == 'POST':
+        customer.customer_name = request.POST.get('customer_name')
+        customer.company_name = request.POST.get('company_name')
+        customer.designation = request.POST.get('designation')
+        customer.edition = request.POST.get('edition')
+        customer.save()
+        return redirect('customer_list')
+    return render(request, 'customer_form.html', {'customer': customer})
+
+def customer_delete(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    if request.method == 'POST':
+        customer.delete()
+        return redirect('customer_list')
+    return render(request, 'customer_confirm_delete.html', {'customer': customer})
+
+# Interview Views
+def interview_list(request):
+    interviews = Interview.objects.all()
+    return render(request, 'interview_list.html', {'interviews': interviews})
+
+def interview_create(request):
+    if request.method == 'POST':
+        customer_name = request.POST.get('customer_name')
+        company_name = request.POST.get('company_name')
+        designation = request.POST.get('designation')
+        edition = request.POST.get('edition')
+        Interview.objects.create(
+            customer_name=customer_name,
+            company_name=company_name,
+            designation=designation,
+            edition=edition
+        )
+        return redirect('interview_list')
+    return render(request, 'interview_form.html')
+
+def interview_update(request, pk):
+    interview = get_object_or_404(Interview, pk=pk)
+    if request.method == 'POST':
+        interview.customer_name = request.POST.get('customer_name')
+        interview.company_name = request.POST.get('company_name')
+        interview.designation = request.POST.get('designation')
+        interview.edition = request.POST.get('edition')
+        interview.save()
+        return redirect('interview_list')
+    return render(request, 'interview_form.html', {'interview': interview})
+
+def interview_delete(request, pk):
+    interview = get_object_or_404(Interview, pk=pk)
+    if request.method == 'POST':
+        interview.delete()
+        return redirect('interview_list')
+    return render(request, 'interview_confirm_delete.html', {'interview': interview})
+
+def magazine_details(request):
+    return render(request, 'magazine_details.html')
 
 
 
-# def pdf_address_list(request):
-#     addresses = Address.objects.all()  # Fetch all addresses
-#     context = {
-#         'addresses': addresses,
-#     }
-#     pdf = render_to_pdf('addresses/pdf_address_list.html', context)  # Render PDF
-#     return HttpResponse(pdf, content_type='application/pdf')  # Return PDF response
 
+@login_required
+def backup_option(request):
+    if request.method == 'POST':
+        # Check the value of the 'backup' button
+        if request.POST.get('backup') == 'yes':
+            db_path = 'C:/Users/BrandsMart/Downloads/dj (2)/dj/dj/address/myproject/db.sqlite3'
+            backup_dir = 'C:/Users/BrandsMart/Documents/backups'
+            
+            # Create backup
+            backup_file = backup_database(db_path, backup_dir)
+            if backup_file:
+                # Redirect to address_list after successful backup
+                return redirect('address_list')
+            else:
+                return render(request, 'error.html', {'message': 'Backup failed.'})
 
-# def print_address_list(request):
-#     addresses = Address.objects.all()  # Fetch all addresses or apply filters as needed
-#     template_path = 'addresses/print_address_list.html'  # Adjust to your template path
-#     context = {'addresses': addresses}
-    
-#     # Render the template
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename="address_list.pdf"'
-    
-#     # Create PDF
-#     template = render(request, template_path, context)
-#     pisa_status = pisa.CreatePDF(template, dest=response)
-    
-#     if pisa_status.err:
-#         return HttpResponse('We had some errors <pre>' + html.escape(pisa_status.err) + '</pre>')
-    
-#     return response
+        elif request.POST.get('backup') == 'no':
+            # Redirect to address_list if the user chooses not to back up
+            return redirect('address_list')
 
-# def download_pdf(request):
-#     # Get selected addresses from the form
-#     selected_ids = request.POST.getlist('selected_addresses')
-    
-#     if not selected_ids:
-#         return HttpResponse('No addresses selected to download.')
-    
-#     # Fetch the selected addresses
-#     addresses = Address.objects.filter(pk__in=selected_ids)
-
-#     # Create PDF response
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename="address_list.pdf"'
-
-#     # Render the PDF
-#     template_path = 'addresses/print_address_list.html'  # Adjust the path to your template
-#     template = render(request, template_path, {'addresses': addresses})
-    
-#     pisa_status = pisa.CreatePDF(template.content, dest=response)
-
-#     if pisa_status.err:
-#         return HttpResponse('We had some errors <pre>' + html.escape(pisa_status.err) + '</pre>')
-#     return response
+    return render(request, 'backup_option.html')
 
 
 
-# def download_address_list_word(request):
-#     addresses = Address.objects.all()  # Fetch all addresses
-#     document = Document()
-#     document.add_heading('Address List', level=1)
-
-#     for address in addresses:
-#         document.add_paragraph(f'S.No: {addresses.index(address) + 1}')
-#         document.add_paragraph(f'Person Name: {address.person_name}')
-#         document.add_paragraph(f'Company Name: {address.company_name}')
-#         document.add_paragraph(f'Address: {address.address}')
-#         document.add_paragraph(f'Phone Number: {address.phone_number}')
-#         document.add_paragraph('')  # Add a blank line between addresses
-
-#     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-#     response['Content-Disposition'] = 'attachment; filename="address_list.docx"'
-#     document.save(response)
-#     return response
-
-# 
 
 def register(request):
     if request.method == 'POST':
@@ -113,24 +288,57 @@ def register(request):
                 user.save()
                 messages.success(request, 'Registration successful! You can now log in.')
                 login(request, user)  # Automatically log in the user after registration
-                return redirect('address_list')  # Redirect to the address list
+                return redirect('login')  # Redirect to the address list
             except Exception as e:
                 messages.error(request, str(e))
 
     return render(request, 'registration/register.html')
 
-# @login_required
-# def address_list(request):
-#     addresses = Address.objects.all()
-#     is_admin = request.user.is_staff  # Assuming 'is_staff' indicates admin
-
-#     return render(request, 'addresses/address_list.html', {
-#         'addresses': addresses,
-#         'is_admin': is_admin,
-#     })
 
 
+@login_required
+def address_list(request):
+    search_field = request.GET.get('field', '')  # Get the selected field from the form
+    search_query = request.GET.get('search', '')  # Get the search query from the form
 
+    # Base queryset
+    addresses = Address.objects.all()
+
+    # Apply search filter
+    if search_query:
+        if search_field == 's_no':
+            addresses = addresses.filter(s_no__icontains=search_query)
+        elif search_field == 'region':
+            addresses = addresses.filter(region__icontains=search_query)
+        elif search_field == 'categories':
+            addresses = addresses.filter(categories__icontains=search_query)
+        elif search_field == 'company_name':
+            addresses = addresses.filter(company_name__icontains=search_query)
+        elif search_field == 'postal_dtdc':
+            addresses = addresses.filter(postal_dtdc__icontains=search_query)
+        elif search_field == 'person_name':
+            addresses = addresses.filter(person_name__icontains=search_query)
+        elif search_field == 'address':
+            addresses = addresses.filter(address__icontains=search_query)
+        elif search_field == 'phone_number':
+            addresses = addresses.filter(phone_number__icontains=search_query)
+        elif search_field == 'email_id':
+            addresses = addresses.filter(email_id__icontains=search_query)
+
+    # Check if the user is an admin (staff)
+    is_admin = request.user.is_staff
+
+    # Calculate the total copies sum
+    total_copies = addresses.aggregate(total_copies=Sum('copies'))['total_copies'] or 0
+
+    return render(request, 'addresses/address_list.html', {
+        'addresses': addresses,
+        'is_admin': is_admin,
+        'search_query': search_query,
+        'search_field': search_field,
+        'total_copies': total_copies,
+       
+    })
 
 def download_pdf(request):
     selected_ids = request.POST.getlist('selected_addresses')
@@ -154,43 +362,77 @@ def download_pdf(request):
 
     return response
 
+# views.py
+from io import BytesIO
+from django.http import HttpResponse
+from django.shortcuts import render
+from docx import Document
+from .models import Address  # Import your Address model
+
+# views.py
+from io import BytesIO
+from django.http import HttpResponse
+from django.shortcuts import render
+from docx import Document
+from .models import Address
+
 def download_word(request):
-    # Get selected addresses from the form
-    selected_ids = request.POST.getlist('selected_addresses')
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_addresses')
 
-    if not selected_ids:
-        return HttpResponse('No addresses selected to download.')
+        if not selected_ids:
+            return HttpResponse('No addresses selected to download.')
 
-    # If no specific addresses are selected, fetch all addresses
-    addresses = Address.objects.all() if selected_ids == ['all'] else Address.objects.filter(pk__in=selected_ids)
+        # Fetch addresses based on selected IDs
+        addresses = Address.objects.all() if 'all' in selected_ids else Address.objects.filter(pk__in=selected_ids)
 
-    # Create a Word document
-    doc = Document()
-    doc.add_heading('Address List', level=1)
+        # Create a Word document
+        doc = Document()
+        doc.add_heading('Address List', level=1)
 
-    # Add a table to the document
-    table = doc.add_table(rows=1, cols=2)
-    hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = 'S.No'
-    hdr_cells[1].text = 'Details'
+        # Add a table to the document
+        table = doc.add_table(rows=1, cols=4)  # 4 columns as required
+        hdr_cells = table.rows[0].cells
+        hdr_cells[0].text = 'S.No'
+        hdr_cells[1].text = 'Region'
+        hdr_cells[2].text = 'Postal/DTDC'
+        hdr_cells[3].text = 'Details'  # This will include person name, company name, address, phone number
 
-    for address in addresses:
-        row_cells = table.add_row().cells
-        row_cells[0].text = str(address.s_no)
-        details = (
-            f"{address.person_name}\n"
-            f"{address.company_name}\n"
-            f"{address.address}\n"
-            f"{address.phone_number}\n"
+        for address in addresses:
+            row_cells = table.add_row().cells
+            row_cells[0].text = str(address.s_no)
+            row_cells[1].text = address.region
+            row_cells[2].text = address.postal_dtdc
+
+            # Combine person name, company name, address, and phone number into one column
+            details = (
+                f"Name: {address.person_name}\n"
+                f"Company: {address.company_name}\n"
+                f"Address: {address.address}\n"
+                f"Phone: {address.phone_number}"
+            )
+            row_cells[3].text = details
+
+        # Create a BytesIO buffer
+        buffer = BytesIO()
+        doc.save(buffer)
+        buffer.seek(0)
+
+        # Create response
+        response = HttpResponse(
+            buffer.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         )
-        row_cells[1].text = details
+        response['Content-Disposition'] = 'attachment; filename="address_list.docx"'
 
-    # Response setup
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-    response['Content-Disposition'] = 'attachment; filename="address_list.docx"'
-    doc.save(response)
+        return response
 
-    return response
+    # Render the form if not a POST request
+    addresses = Address.objects.all()  # Fetch all addresses for the selection
+    return render(request, 'download_form.html', {'addresses': addresses})
+
+
+   
 
 
 def welcome(request):
@@ -203,162 +445,78 @@ def is_admin(user):
 def print_address_list(request):
     addresses = Address.objects.all()  # Fetch all addresses
     return render(request, 'addresses/print_address_list.html', {'addresses': addresses})
-
-
 def custom_login(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        # Retry logic for database access
-        for _ in range(5):  # Retry up to 5 times
-            try:
-                user = authenticate(request, username=username, password=password)
-                if user is not None:
-                    login(request, user)
-                    return redirect('address_list')  # Redirect to address list after login
-                else:
-                    return render(request, 'registration/login.html', {'error': 'Invalid username or password'})
-            except OperationalError:
-                time.sleep(1)  # Wait a second before retrying
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            # Check if the user is an admin
+            if user.is_staff:
+                return redirect('backup_option')  # Redirect to the backup option page
+            else:
+                return redirect('home')  # Redirect to a normal user home page
+        else:
+            return render(request, 'registration/login.html', {'error': 'Invalid credentials'})
+
     return render(request, 'registration/login.html')
 
-# @login_required
-# def address_list(request):
-#     addresses = Address.objects.all()
-#     return render(request, 'addresses/address_list.html', {'addresses': addresses})
-
-##################################
 
 @login_required
-def address_list(request):
-    search_query = request.GET.get('search', '')
-    search_field = request.GET.get('field', '')
-
-    addresses = Address.objects.all()
-
-    if search_query and search_field:
-        # Use icontains for case-insensitive partial matching
-        filter_kwargs = {f"{search_field}__icontains": search_query}
-        addresses = addresses.filter(**filter_kwargs)
-
-    return render(request, 'addresses/address_list.html', {
-        'addresses': addresses,
-        'request': request,
-    })
-
-@login_required
-def return_address_list(request):
-    return_addresses = ReturnAddress.objects.all()  # Adjust as necessary
-
-    return render(request, 'addresses/return_address_list.html', {
-        'return_addresses': return_addresses,
-    })
-
-@login_required
-def create_return_address(request):
+def address_create(request):
     if request.method == 'POST':
-        return_address = request.POST.get('return_address')
-        correct_address = request.POST.get('correct_address')
-        reason = request.POST.get('reason')
+        # Collecting data from the POST request
+        region = request.POST.get('region')
+        categories = request.POST.get('categories')
+        postal_dtdc = request.POST.get('postal_dtdc')
+        person_name = request.POST.get('person_name')
+        company_name = request.POST.get('company_name')
+        address = request.POST.get('address')
+        phone_number = request.POST.get('phone_number')
+        copies = request.POST.get('copies')
 
-        # Create a new return address instance and save it
-        ReturnAddress.objects.create(
-            return_address=return_address,
-            correct_address=correct_address,
-            reason=reason
+        # Convert to integer only if it's not None
+        if copies:
+            try:
+                copies = int(copies)
+            except ValueError:
+                print("Error converting copies to integer")
+                copies = 1
+
+        receiver_name = request.POST.get('receiver_name')
+        email_id = request.POST.get('email_id')
+
+        # Saving the data to the database
+        new_address = Address(
+            region=region,
+            categories=categories,
+            postal_dtdc=postal_dtdc,
+            person_name=person_name,
+            company_name=company_name,
+            address=address,
+            phone_number=phone_number,
+            copies=copies,
+            receiver_name=receiver_name,
+            email_id=email_id
         )
-        return redirect('return_address_list')  # Redirect to the return address list after creation
+        new_address.save()
+        
+        # Log action with the correct ID
+        AddressHistory.objects.create(
+            user=request.user,
+            action='create',
+            address_record=new_address
+        )
 
-    # Handle GET request by rendering the form template
-    return render(request, 'addresses/create_return_address.html') 
-# @login_required
-# def address_create(request):
-#     if request.method == 'POST':
-#         address = Address(
-#             region=request.POST.get('region'),
-#             categories=request.POST.get('categories'),
-#             postal_dtdc=request.POST.get('postal_dtdc'),
-#             person_name=request.POST.get('person_name'),
-#             company_name=request.POST.get('company_name'),
-#             address=request.POST.get('address'),
-#             phone_number=request.POST.get('phone_number'),
-#             copies=request.POST.get('copies'),
-#             receiver_name=request.POST.get('receiver_name'),
-#             email_id=request.POST.get('email_id'),
-#         )
-#         address.save()
-#         return redirect('address_list')
-#     return render(request, 'addresses/address_form.html')
+        # Display a success message
+        messages.success(request, 'Address added successfully!')
 
-# @login_required
-# def address_list(request):
-#     addresses = Address.objects.all()
-    
-#     # Handle search query
-#     search_query = request.GET.get('search', '')
-#     if search_query:
-#         addresses = addresses.filter(
-#             Q(region__icontains=search_query) |
-#             Q(categories__icontains=search_query) |
-#             Q(company_name__icontains=search_query) |
-#             Q(person_name__icontains=search_query) |
-#             Q(address__icontains=search_query) |
-#             Q(email_id__icontains=search_query)
-#         )
-    
-#     # Pagination
-#     paginator = Paginator(addresses, 10)  # Show 10 addresses per page
-#     page_number = request.GET.get('page')
-#     addresses = paginator.get_page(page_number)
-#     is_admin = request.user.is_staff
+        # Redirect to address list
+        return redirect('address_list')
 
-#     return render(request, 'addresses/address_list.html', {
-#         'addresses': addresses,
-#         'is_admin': is_admin,
-#     })
-
-# @login_required
-# def address_update(request):
-#     address = get_object_or_404(Address)
-#     if request.method == 'POST':
-#         address.region = request.POST.get('region')
-#         address.categories = request.POST.get('categories')
-#         address.postal_dtdc = request.POST.get('postal_dtdc')
-#         address.person_name = request.POST.get('person_name')
-#         address.company_name = request.POST.get('company_name')
-#         address.address = request.POST.get('address')
-#         address.phone_number = request.POST.get('phone_number')
-#         address.copies = request.POST.get('copies')
-#         address.receiver_name = request.POST.get('receiver_name')
-#         address.email_id = request.POST.get('email_id')
-#         address.save()
-#         return redirect('address_list')
-#     return render(request, 'addresses/address_form.html', {'address': address})
-
-# def address_list(request):
-#     search_query = request.GET.get('search', '')
-#     field = request.GET.get('field', 's_no')  # Default sort field
-
-#     addresses = Address.objects.all()
-
-#     if search_query:
-#         addresses = addresses.filter(
-#             # Update based on the fields you want to search
-#             Q(return_address__icontains=search_query) | 
-#             Q(correct_address__icontains=search_query) | 
-#             Q(reason__icontains=search_query)
-#         )
-
-#     paginator = Paginator(addresses, 10)  # Show 10 addresses per page
-#     page_number = request.GET.get('page')
-#     addresses = paginator.get_page(page_number)
-
-#     context = {
-#         'addresses': addresses,
-#         'request': request,
-#     }
-#     return render(request, 'address_list.html', context)
+    return render(request, 'addresses/address_form.html')
 
 
 def address_update(request, pk):
@@ -378,17 +536,16 @@ def address_update(request, pk):
         address.email_id = request.POST.get('email_id', address.email_id)
         
         address.save()  # Save the updated address
+        
+        AddressHistory.objects.create(
+            user=request.user,
+            action='edit',
+            address_record=address
+        )
         messages.success(request, "Address updated successfully.")
         return redirect('address_list')  # Adjust to your actual address list view
 
     return render(request, 'addresses/update_form.html', {'address': address})
-
-# @login_required
-# # @user_passes_test(is_admin)
-# def address_delete(request, pk):
-#     address = get_object_or_404(Address, pk=pk)
-#     address.delete()
-#     return redirect('address_list')
 
 
 def address_delete(request, pk):
@@ -396,10 +553,17 @@ def address_delete(request, pk):
 
     if request.method == 'POST':
         address.delete()
+        AddressHistory.objects.create(
+            user=request.user,
+            action='delete',
+            address_record=address
+        )
         messages.success(request, "Address deleted successfully.")
         return redirect('address_list')  # Adjust to your actual address list view
 
     return render(request, 'addresses/confirm_delete.html', {'address': address})
+
+
 
 @login_required
 def import_addresses(request):
@@ -409,226 +573,275 @@ def import_addresses(request):
             # Check if the uploaded file is an Excel file
             if not excel_file.name.endswith(('.xls', '.xlsx')):
                 messages.error(request, "Please upload a valid Excel file.")
-                return redirect('import_addresses')
+                return redirect('import_form')  # Use the correct URL name for your import form
 
             try:
                 # Read the Excel file
                 df = pd.read_excel(excel_file)
 
-                # Initialize counters for imported and updated addresses
-                imported_count = 0
-                updated_count = 0
+                # Initialize counter for imported addresses
+                success_count = 0
 
                 # Loop through the rows in the DataFrame
                 for index, row in df.iterrows():
-                    # Check for duplicates based on the address field
-                    existing_address = Address.objects.filter(address=row['address']).first()
+                    address_value = row['address']
 
-                    if existing_address:
-                        # Update existing record with new data
-                        existing_address.region = row['region']
-                        existing_address.categories = row['categories']
-                        existing_address.postal_dtdc = row['postal_dtdc']
-                        existing_address.person_name = row['person_name']
-                        existing_address.company_name = row['company_name']
-                        existing_address.phone_number = row['phone_number']
-                        existing_address.copies = row['copies']
-                        existing_address.receiver_name = row['receiver_name']
-                        existing_address.email_id = row['email_id']
-                        existing_address.save()
-                        updated_count += 1
-                    else:
-                        # Create a new Address object
+                    # Delete existing duplicates based on the address field
+                    Address.objects.filter(address=address_value).delete()
+
+                    try:
+                        # Create a new Address object (after deleting any existing duplicates)
                         Address.objects.create(
                             region=row['region'],
                             categories=row['categories'],
                             postal_dtdc=row['postal_dtdc'],
                             person_name=row['person_name'],
                             company_name=row['company_name'],
-                            address=row['address'],
+                            address=address_value,
                             phone_number=row['phone_number'],
                             copies=row['copies'],
                             receiver_name=row['receiver_name'],
                             email_id=row['email_id'],
                         )
-                        imported_count += 1
+                        success_count += 1
+                    except Exception as e:
+                        # Log or handle errors as needed
+                        continue
 
                 # Provide user feedback about the import process
-                messages.success(request, f"Imported {imported_count} new addresses and updated {updated_count} existing addresses.")
-                return redirect('address_list')  # Redirect to address list after import
+                messages.success(request, f"Imported {success_count} addresses successfully after handling duplicates.")
+                return redirect('address_list')  # Redirect to the address list after import
 
             except Exception as e:
                 messages.error(request, "Error reading the Excel file. Please check the file format.")
-                return redirect('import_addresses')
+                return redirect('import_form')  # Redirect to the import form in case of error
 
-    return render(request, 'addresses/import_form.html')
+    return render(request, 'addresses/import_form.html')  # Render the import form template
+
+
 
 @login_required
-def address_create(request):
+def return_address_list(request):
+    records = AddressRecord.objects.all()
+    return render(request, 'return_address_list.html', {'records': records})
+
+@login_required
+def return_create_address(request):
     if request.method == 'POST':
-        # Extract data from the form
-        address_data = {
-            'region': request.POST.get('region'),
-            'categories': request.POST.get('categories'),
-            'postal_dtdc': request.POST.get('postal_dtdc'),
-            'person_name': request.POST.get('person_name'),
-            'company_name': request.POST.get('company_name'),
-            'address': request.POST.get('address'),
-            'phone_number': request.POST.get('phone_number'),
-            'copies': request.POST.get('copies'),
-            'receiver_name': request.POST.get('receiver_name'),
-            'email_id': request.POST.get('email_id'),
+        s_no = request.POST['s_no']
+        return_address = request.POST['return_address']
+        confirm_address = request.POST['confirm_address']
+        reason = request.POST['reason']
+        status = request.POST.get('status', 'not_verified')
+
+        # Create the AddressRecord instance
+        new_record = AddressRecord.objects.create(
+            s_no=s_no,
+            return_address=return_address,
+            confirm_address=confirm_address,
+            reason=reason,
+            status=status
+        )
+
+        # Log the action
+        AddressRecordHistory.objects.create(
+            user=request.user,
+            action='create',
+            address_record=new_record
+        )
+        return redirect('return_address_list')
+
+    return render(request, 'return_create_address.html')
+
+@login_required
+def return_edit_address(request, pk):
+    record = get_object_or_404(AddressRecord, pk=pk)
+
+    if request.method == 'POST':
+        record.s_no = request.POST['s_no']
+        record.return_address = request.POST['return_address']
+        record.confirm_address = request.POST['confirm_address']
+        record.reason = request.POST['reason']
+        record.status = request.POST['status']
+        record.save()
+
+        # Log the action
+        AddressRecordHistory.objects.create(
+            user=request.user,
+            action='edit',
+            address_record=record
+        )
+        return redirect('return_address_list')
+
+    return render(request, 'return_edit_address.html', {'record': record})
+
+@login_required
+def return_delete_address(request, pk):
+    record = get_object_or_404(AddressRecord, pk=pk)
+    
+    # Log the action before deleting
+    AddressRecordHistory.objects.create(
+            user=request.user,
+            action='delete',
+            address_record=record
+        )
+   
+    record.delete()
+    return redirect('return_address_list')
+
+
+def monthly_copies_summary(request):
+    summaries = MonthlyCopiesSummary.objects.all()
+    month_names = {
+        1: 'January', 2: 'February', 3: 'March',
+        4: 'April', 5: 'May', 6: 'June',
+        7: 'July', 8: 'August', 9: 'September',
+        10: 'October', 11: 'November', 12: 'December'
+    }
+
+    # Convert start and end month numbers to names
+    for summary in summaries:
+        summary.start_month_name = month_names.get(summary.start_month, summary.start_month)
+        summary.end_month_name = month_names.get(summary.end_month, summary.end_month)
+
+    return render(request, 'monthly_copies_summary.html', {'summaries': summaries})
+
+
+# # List View for Monthly Copies Summary
+# def monthly_copies_summary(request):
+#     summaries = MonthlyCopiesSummary.objects.all()
+#     return render(request, 'monthly_copies_summary.html', {'summaries': summaries})
+
+
+# # Create View for Monthly Copies Summary
+# def create_monthly_copies_summary(request):
+#     if request.method == 'POST':
+#         year = request.POST.get('year')
+#         start_month = request.POST.get('start_month')
+#         end_month = request.POST.get('end_month')
+#         save_copies = request.POST.get('save_copies') == 'on'
+
+#         month_mapping = {
+#             'january': 1, 'february': 2, 'march': 3,
+#             'april': 4, 'may': 5, 'june': 6,
+#             'july': 7, 'august': 8, 'september': 9,
+#             'october': 10, 'november': 11, 'december': 12
+#         }
+
+#         start_month_num = month_mapping.get(start_month.lower())
+#         end_month_num = month_mapping.get(end_month.lower())
+
+#         if start_month_num and end_month_num:
+#             total_copies = Address.objects.aggregate(Sum('copies'))['copies__sum'] or 0
+
+#             MonthlyCopiesSummary.objects.create(
+#                 year=year,
+#                 start_month=start_month_num,
+#                 end_month=end_month_num,
+#                 total_copies=total_copies
+#             )
+#             return redirect('monthly_copies_summary_list')
+
+#     total_copies = Address.objects.aggregate(Sum('copies'))['copies__sum'] or 0
+#     return render(request, 'create_monthly_copies_summary.html', {
+#         'total_copies': total_copies
+#     })
+
+from django.shortcuts import render, redirect
+from django.db.models import Sum
+from .models import MonthlyCopiesSummary, Address  # Adjust imports based on your models
+
+# Create View for Monthly Copies Summary
+def create_monthly_copies_summary(request):
+    if request.method == 'POST':
+        year = request.POST.get('year')
+        start_month = request.POST.get('start_month')
+        end_month = request.POST.get('end_month')
+        save_copies = request.POST.get('save_copies') == 'on'
+
+        month_mapping = {
+            'january': 1, 'february': 2, 'march': 3,
+            'april': 4, 'may': 5, 'june': 6,
+            'july': 7, 'august': 8, 'september': 9,
+            'october': 10, 'november': 11, 'december': 12,
+            'jan': 1, 'feb': 2, 'mar': 3,
+            'apr': 4, 'jun': 6, 'jul': 7,
+            'aug': 8, 'sep': 9, 'oct': 10,
+            'nov': 11, 'dec': 12
         }
 
-        # Check if the address already exists
-        if Address.objects.filter(address=address_data['address']).exists():
-            messages.error(request, "This address already exists. Please enter a new address.")
-            return render(request, 'addresses/address_form.html', {'data': address_data})
+        # Convert start and end months to lowercase and find their mapping
+        start_month_num = month_mapping.get(start_month.lower())
+        end_month_num = month_mapping.get(end_month.lower())
 
-        # If the address does not exist, create a new one
-        Address.objects.create(**address_data)
-        messages.success(request, "Address created successfully.")
-        return redirect('address_list')
+        # Check if months are valid
+        if start_month_num is None or end_month_num is None:
+            return render(request, 'create_monthly_copies_summary.html', {
+                'error': 'Invalid month names provided.',
+                'total_copies': Address.objects.aggregate(Sum('copies'))['copies__sum'] or 0
+            })
 
-    return render(request, 'addresses/address_form.html')
+        # Calculate total copies
+        total_copies = Address.objects.aggregate(Sum('copies'))['copies__sum'] or 0
 
-# @login_required
-# def import_addresses(request):
-#     if request.method == 'POST':
-#         excel_file = request.FILES.get('file')
-#         if excel_file:
-#             # Check if the uploaded file is an Excel file
-#             if not excel_file.name.endswith(('.xls', '.xlsx')):
-#                 messages.error(request, "Please upload a valid Excel file.")
-#                 return redirect('import_addresses')
+        # Create Monthly Copies Summary entry
+        MonthlyCopiesSummary.objects.create(
+            year=year,
+            start_month=start_month_num,
+            end_month=end_month_num,
+            total_copies=total_copies
+        )
+        return redirect('monthly_copies_summary')
 
-#             try:
-#                 # Read the Excel file
-#                 df = pd.read_excel(excel_file)
-
-#                 # Initialize counters for imported and duplicate addresses
-#                 success_count = 0
-#                 duplicate_count = 0
-
-#                 # Loop through the rows in the DataFrame
-#                 for index, row in df.iterrows():
-#                     # Check for duplicates based on multiple fields
-#                     existing_address = Address.objects.filter(
-#                         region=row['region'],
-#                         categories=row['categories'],
-#                         address=row['address'],
-#                         phone_number=row['phone_number']  # Include other fields as needed
-#                     ).first()
-
-#                     if not existing_address:
-#                         try:
-#                             # Create a new Address object
-#                             Address.objects.create(
-#                                 region=row['region'],
-#                                 categories=row['categories'],
-#                                 postal_dtdc=row['postal_dtdc'],
-#                                 person_name=row['person_name'],
-#                                 company_name=row['company_name'],
-#                                 address=row['address'],
-#                                 phone_number=row['phone_number'],
-#                                 copies=row['copies'],
-#                                 receiver_name=row['receiver_name'],
-#                                 email_id=row['email_id'],
-#                             )
-#                             success_count += 1
-#                         except Exception as e:
-#                             # Log the error or handle it as needed
-#                             continue
-#                     else:
-#                         duplicate_count += 1
-
-#                 # Provide user feedback about the import process
-#                 messages.success(request, f"Imported {success_count} addresses successfully. {duplicate_count} duplicates were skipped.")
-#                 return redirect('address_list')  # Redirect to address list after import
-
-#             except Exception as e:
-#                 messages.error(request, "Error reading the Excel file. Please check the file format.")
-#                 return redirect('import_addresses')
-
-#     return render(request, 'addresses/import_form.html')
+    total_copies = Address.objects.aggregate(Sum('copies'))['copies__sum'] or 0
+    return render(request, 'create_monthly_copies_summary.html', {
+        'total_copies': total_copies
+    })
 
 
-# @login_required
-# @user_passes_test(is_admin)
-# @login_required
-# def import_addresses(request):
-#     if request.method == 'POST':
-#         excel_file = request.FILES.get('file')
-#         if excel_file:
-#             # Check if the uploaded file is an Excel file
-#             if not excel_file.name.endswith(('.xls', '.xlsx')):
-#                 messages.error(request, "Please upload a valid Excel file.")
-#                 return redirect('import_addresses')
 
-#             try:
-#                 # Read the Excel file
-#                 df = pd.read_excel(excel_file)
+# Edit View for Monthly Copies Summary
+def edit_monthly_copies_summary(request, id):
+    summary = get_object_or_404(MonthlyCopiesSummary, id=id)
 
-#                 # Initialize counters for imported and duplicate addresses
-#                 success_count = 0
-#                 duplicate_count = 0
+    if request.method == 'POST':
+        summary.year = request.POST.get('year')
+        summary.start_month = request.POST.get('start_month')
+        summary.end_month = request.POST.get('end_month')
+        summary.save()
+        return redirect('monthly_copies_summary')
 
-#                 # Loop through the rows in the DataFrame
-#                 for index, row in df.iterrows():
-#                     address_value = row['address']
-#                     # Check if the address already exists
-#                     if not Address.objects.filter(address=address_value).exists():
-#                         try:
-#                             # Create a new Address object
-#                             Address.objects.create(
-#                                 region=row['region'],
-#                                 categories=row['categories'],
-#                                 postal_dtdc=row['postal_dtdc'],
-#                                 person_name=row['person_name'],
-#                                 company_name=row['company_name'],
-#                                 address=address_value,
-#                                 phone_number=row['phone_number'],
-#                                 copies=row['copies'],
-#                                 receiver_name=row['receiver_name'],
-#                                 email_id=row['email_id'],
-#                             )
-#                             success_count += 1
-#                         except Exception as e:
-#                             # Log the error or handle it as needed
-#                             continue
-#                     else:
-#                         duplicate_count += 1
+    return render(request, 'edit_monthly_copies_summary.html', {
+        'summary': summary,
+    })
 
-#                 # Provide user feedback about the import process
-#                 messages.success(request, f"Imported {success_count} addresses successfully. {duplicate_count} duplicates were skipped.")
-#                 return redirect('address_list')  # Redirect to address list after import
+# Delete View for Monthly Copies Summary
+def delete_monthly_copies_summary(request, id):
+    summary = get_object_or_404(MonthlyCopiesSummary, id=id)
 
-#             except Exception as e:
-#                 messages.error(request, "Error reading the Excel file. Please check the file format.")
-#                 return redirect('import_addresses')
+    if request.method == 'POST':
+        summary.delete()
+        return redirect('monthly_copies_summary')
 
-#     return render(request, 'addresses/import_form.html')
-# def import_addresses(request):
-#     if request.method == 'POST':
-#         excel_file = request.FILES.get('file')
-#         if excel_file:
-#             # Read the Excel file
-#             df = pd.read_excel(excel_file)
+    return render(request, 'delete_monthly_copies_summary.html', {
+        'summary': summary,
+    })
 
-#             # Loop through the rows and create Address objects
-#             for index, row in df.iterrows():
-#                 Address.objects.create(
-#                     region=row['region'],
-#                     categories=row['categories'],
-#                     postal_dtdc=row['postal_dtdc'],
-#                     person_name=row['person_name'],
-#                     company_name=row['company_name'],
-#                     address=row['address'],
-#                     phone_number=row['phone_number'],
-#                     copies=row['copies'],
-#                     receiver_name=row['receiver_name'],
-#                     email_id=row['email_id'],
-#                 )
-#             return redirect('address_list')  # Redirect to address list after import
 
-#     return render(request, 'addresses/import_form.html')
+def save_monthly_copies(request):
+    # Your code here
+    pass
+
+
+
+# views.py
+
+@login_required
+def return_address_history(request):
+    history_list = AddressRecordHistory.objects.all()  # Fetch all history records
+    return render(request, 'return_history_list.html', {'history_list': history_list})
+
+@login_required
+def create_address_history(request):
+    history_list = AddressHistory.objects.all()
+    return render(request, 'create_history.html', {'history_list': history_list})

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup Option</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #002147, #004b87); /* Deep blue gradient */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .backup-container {
+            background: rgba(0, 0, 0, 0.7); /* Dark semi-transparent box */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInUp 0.6s forwards; /* Fade in animation */
+        }
+
+        h2 {
+            color: #00BFFF; /* Bright blue for the heading */
+            margin-bottom: 20px;
+            font-size: 26px;
+            animation: popIn 0.4s; /* Heading animation */
+        }
+
+        p {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+
+        button {
+            background-color: #007BFF; /* Bright blue for the button */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: translateY(-2px);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="backup-container">
+        <h2>Backup Option</h2>
+        <form method="post">
+            {% csrf_token %}
+            <p>Would you like to back up the database?</p>
+            <button type="submit" name="backup" value="yes">Yes</button>
+            <button type="submit" name="backup" value="no">No</button>
+        </form>
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>

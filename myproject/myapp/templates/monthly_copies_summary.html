@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Copies Summary List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles can go here */
+        body {
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            
+            color: #333;
+            margin-bottom: 20px;
+            font-family: monospace;
+            text-align: center;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+        }
+        nav {
+    display: flex;
+    justify-content: space-around; /* Creates space between items */
+    align-items: center; /* Centers items vertically */
+    background-color: #001e33; /* Darker blue base */
+    padding: 15px 30px;
+    position: relative; /* To position the animated background */
+    overflow: hidden; /* Hides overflow */
+    border-radius: 20px; /* Rounded edges */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Strong shadow for depth */
+}
+
+nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(270deg, #004080, #00509e, #007acc); /* Animated gradient */
+    z-index: 0; /* Behind the links */
+    opacity: 0.4; /* Slight transparency */
+    animation: gradientAnimation 6s ease infinite; /* Animation for background */
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+nav a {
+    font-family: monospace;
+    color: #fff; /* White text for contrast */
+    padding: 12px 25px;
+    margin: 0 15px;
+    text-decoration: none;
+    border-radius: 25px; /* Rounded buttons */
+    position: relative; /* For the hover effect */
+    overflow: hidden; /* Hides overflow */
+    transition: color 0.3s, transform 0.3s; /* Smooth transitions */
+    font-size: 16px; /* Font size */
+    text-transform: uppercase; /* Uppercase text for style */
+    font-weight: bold; /* Bold text for emphasis */
+}
+
+nav a::before {
+    content: '';
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    width: 300%; /* Start larger */
+    height: 300%; /* Start larger */
+    background: rgba(255, 255, 255, 0.1); /* Light overlay */
+    border-radius: 50%; /* Circular effect */
+    transform: translate(-50%, -50%) scale(0); /* Initially hidden */
+    transition: transform 0.3s; /* Smooth scaling */
+    z-index: 0; /* Behind the text */
+}
+
+nav a:hover::before {
+    transform: translate(-50%, -50%) scale(1); /* Expand on hover */
+}
+
+nav a:hover {
+    color: #49abd8; /* Gold color on hover */
+    transform: scale(1.1); /* Slightly increase size on hover */
+}
+
+nav a.active {
+    background: linear-gradient(90deg, #007acc, #00509e); /* Gradient for active link */
+    color: #fff; /* Ensure active link text is visible */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* Glow effect for active */
+}
+
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'welcome' %}" class="active">Home</a>
+        <a href="{% url 'address_list' %}">Address List</a>
+        <a href="{% url 'return_address_list' %}">Return Address List</a>
+        <a href="{% url 'monthly_copies_summary' %}">Magazine Summary List</a>
+        <a href="{% url 'magazine_details' %}">Magazine Details</a>
+        <a href="{% url 'return_address_history' %}">History</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+
+<div class="container">
+    <h1>Monthly Copies Summary List</h1>
+    <a href="{% url 'create_monthly_copies_summary' %}" class="btn btn-primary mb-3">Create Monthly Copies</a>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Year</th>
+                <th>Start Month</th>
+                <th>End Month</th>
+                <th>Total Copies</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for summary in summaries %}
+            <tr>
+                <td>{{ summary.year }}</td>
+                <td>{{ summary.start_month }}</td>
+                <td>{{ summary.end_month }}</td>
+                <td>{{ summary.total_copies }}</td>
+                <td class="action-buttons">
+                    <a href="{% url 'edit_monthly_copies_summary' summary.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{% url 'delete_monthly_copies_summary' summary.id %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No summaries available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Bootstrap JS and dependencies (optional for responsive navbar, etc.) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

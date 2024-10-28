@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- model_history.html -->
+
+<h1>{{ logs.0.model_name }} History</h1>
+<table>
+    <tr>
+        <th>Action</th>
+        <th>User</th>
+        <th>Timestamp</th>
+        <th>Details</th>
+    </tr>
+    {% for log in logs %}
+    <tr>
+        <td>{{ log.action }}</td>
+        <td>{{ log.user.username }}</td>
+        <td>{{ log.timestamp }}</td>
+        <td>{{ log.details }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">No history available.</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'action_history' %}">Back to Action History</a>
+
+</body>
+</html>

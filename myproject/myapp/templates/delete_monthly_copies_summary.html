@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Monthly Copies Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Delete Monthly Copies Summary</h1>
+
+<p>Are you sure you want to delete the summary for {{ summary.year }} from {{ summary.start_month }} to {{ summary.end_month }}?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Yes, delete it</button>
+</form>
+
+<a href="{% url 'monthly_copies_summary_list' %}">Cancel</a>
+
+</body>
+</html>

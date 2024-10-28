@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magazine Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            animation: backgroundAnimation 10s linear infinite;
+            background: linear-gradient(45deg, #002147, #004e92);
+            background-size: 400% 400%;
+        }
+
+        @keyframes backgroundAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        h1 {
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 20px;
+            font-size: 2.5em; /* Larger font size */
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        li {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s; /* Added shadow transition */
+        }
+        li:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration:double;
+            color: #9e95ea; /* Darker color on hover */
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #85dbf5;
+            color: rgb(25, 4, 4);
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s; /* Smooth transition for button */
+        }
+        .back-link:hover {
+            background-color: #c0f111;
+        }
+        nav {
+    display: flex;
+    justify-content: space-around; /* Creates space between items */
+    align-items: center; /* Centers items vertically */
+    background-color: #001e33; /* Darker blue base */
+    padding: 15px 30px;
+    position: fixed; /* Fixed position to stay at the top */
+    top: 0; /* Aligns with the top of the viewport */
+    left: 0; /* Aligns with the left side */
+    right: 0; /* Aligns with the right side */
+    overflow: hidden; /* Hides overflow */
+    border-radius: 0 0 20px 20px; /* Rounded bottom edges */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Strong shadow for depth */
+    z-index: 1000; /* Ensure it stays above other content */
+}
+
+nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(270deg, #004080, #00509e, #007acc); /* Animated gradient */
+    z-index: 0; /* Behind the links */
+    opacity: 0.4; /* Slight transparency */
+    animation: gradientAnimation 6s ease infinite; /* Animation for background */
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+nav a {
+    font-family: monospace;
+    color: #fff; /* White text for contrast */
+    padding: 12px 25px;
+    margin: 0 15px;
+    text-decoration: none;
+    border-radius: 25px; /* Rounded buttons */
+    position: relative; /* For the hover effect */
+    overflow: hidden; /* Hides overflow */
+    transition: color 0.3s, transform 0.3s; /* Smooth transitions */
+    font-size: 16px; /* Font size */
+    text-transform: uppercase; /* Uppercase text for style */
+    font-weight: bold; /* Bold text for emphasis */
+}
+
+nav a::before {
+    content: '';
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    width: 300%; /* Start larger */
+    height: 300%; /* Start larger */
+    background: rgba(255, 255, 255, 0.1); /* Light overlay */
+    border-radius: 50%; /* Circular effect */
+    transform: translate(-50%, -50%) scale(0); /* Initially hidden */
+    transition: transform 0.3s; /* Smooth scaling */
+    z-index: 0; /* Behind the text */
+}
+
+nav a:hover::before {
+    transform: translate(-50%, -50%) scale(1); /* Expand on hover */
+}
+
+nav a:hover {
+    color: #49abd8; /* Gold color on hover */
+    transform: scale(1.1); /* Slightly increase size on hover */
+}
+
+nav a.active {
+    background: linear-gradient(90deg, #007acc, #00509e); /* Gradient for active link */
+    color: #fff; /* Ensure active link text is visible */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* Glow effect for active */
+}
+
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'welcome' %}" class="active">Home</a>
+        <a href="{% url 'address_list' %}">Address List</a>
+        <a href="{% url 'return_address_list' %}">Return Address List</a>
+        <a href="{% url 'monthly_copies_summary' %}">Magazine Summary List</a>
+        <a href="{% url 'magazine_details' %}">magazine details</a>
+        <a href="{% url 'create_address_history' %}">history</a>
+       
+        <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+    
+    <h1>Magazine Details</h1>
+    <ul>
+        <li><a href="{% url 'professional_list' %}">View Professionals</a></li>
+        <li><a href="{% url 'classified_list' %}">View Classifieds</a></li>
+        <li><a href="{% url 'expert_list' %}">View Experts</a></li>
+        <li><a href="{% url 'customer_list' %}">View Customers</a></li>
+        <li><a href="{% url 'interview_list' %}">View Interviews</a></li>
+    </ul>
+
+    <a href="{% url 'magazine_details' %}" class="back-link">Back to Magazine List</a>
+</body>
+</html>

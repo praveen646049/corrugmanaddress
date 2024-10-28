@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Return Address</title>
+</head>
+<body>
+    <h1>Edit Return Address</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="s_no">S.No:</label>
+        <input type="text" id="s_no" name="s_no" value="{{ record.s_no }}"><br>
+
+        <label for="return_address">Return Address:</label>
+        <input type="text" id="return_address" name="return_address" value="{{ record.return_address }}"><br>
+
+        <label for="confirm_address">Confirm Address:</label>
+        <input type="text" id="confirm_address" name="confirm_address" value="{{ record.confirm_address }}"><br>
+
+        <label for="reason">Reason:</label>
+        <input type="text" id="reason" name="reason" value="{{ record.reason }}"><br>
+
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option value="not_verified" {% if record.status == 'not_verified' %}selected{% endif %}>Not Verified</option>
+            <option value="rejected" {% if record.status == 'rejected' %}selected{% endif %}>Rejected</option>
+            <option value="verified" {% if record.status == 'verified' %}selected{% endif %}>Verified</option>
+        </select><br><br>
+
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'return_address_list' %}">Back to List</a>
+</body>
+</html>

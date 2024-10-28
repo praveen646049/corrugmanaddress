@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Address History</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background */
+        }
+        .container {
+            font-family: 'Courier New', Courier, monospace; 
+            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            background-color: white; /* White background for the container */
+            padding: 20px;
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+        h1 {
+            color: #343a40; /* Dark header */
+            text-align: center;
+            font-family: monospace;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #007bff; /* Blue header */
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2; /* Zebra striping */
+        }
+        .btn-primary {
+            background-color: #007bff; /* Primary button color */
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker on hover */
+        }
+        .no-records {
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace; 
+            color: #6c757d; /* Gray color for no records */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Create Address History</h1>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Address Record</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for history in history_list %}
+                <tr>
+                    <td>{{ history.user.username }}</td>
+                    <td>{{ history.action }}</td>
+                    <td>{{ history.address_record }}</td>
+                    <td>{{ history.timestamp }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="no-records">No history records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'address_list' %}" class="btn btn-primary">Back to Address List</a>
+    </div>
+    
+    <!-- Bootstrap JS and dependencies (jQuery and Popper.js) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

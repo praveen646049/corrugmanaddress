@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Monthly Copies Summary</title>
+    <style>
+        /* Add your styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Edit Monthly Copies Summary</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <div>
+        <label for="year">Year:</label>
+        <input type="number" id="year" name="year" value="{{ summary.year }}" required>
+    </div>
+    
+    <div>
+        <label for="start_month">Start Month:</label>
+        <input type="text" id="start_month" name="start_month" value="{{ summary.start_month }}" required>
+    </div>
+
+    <div>
+        <label for="end_month">End Month:</label>
+        <input type="text" id="end_month" name="end_month" value="{{ summary.end_month }}" required>
+    </div>
+
+    <button type="submit">Update Summary</button>
+</form>
+
+<a href="{% url 'monthly_copies_summary_list' %}" class="button">Back to Summary List</a>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Monthly Copies</title>
+</head>
+<body>
+    <h1>Save Monthly Total Copies</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="start_month">Enter Start Month (YYYY-MM):</label>
+        <input type="text" id="start_month" name="start_month" required placeholder="2024-06">
+
+        <br><br> <!-- Added spacing between fields -->
+
+        <label for="end_month">Enter End Month (YYYY-MM):</label>
+        <input type="text" id="end_month" name="end_month" required placeholder="2024-07">
+
+        <br><br>
+
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'monthly_copies_summary' %}">monthly copies</a>
+    <a href="{% url 'address_list' %}">Back to Address List</a>
+</body>
+</html>
+

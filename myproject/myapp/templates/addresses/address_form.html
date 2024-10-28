@@ -3,88 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create/Edit Address</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Create New Address</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #ffffff; /* White background for the body */
+            color: #333; /* Dark text for readability */
+        }
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #003366; /* Dark blue for the form */
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            text-align: center;
+            color: #ffffff;
+            font-family: monospace; /* White title color */
+        }
+        nav {
+    display: flex;
+    justify-content: space-around; /* Creates space between items */
+    align-items: center; /* Centers items vertically */
+    background-color: #001e33; /* Darker blue base */
+    padding: 15px 30px;
+    position: relative; /* To position the animated background */
+    overflow: hidden; /* Hides overflow */
+    border-radius: 20px; /* Rounded edges */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Strong shadow for depth */
+}
+
+nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(270deg, #004080, #00509e, #007acc); /* Animated gradient */
+    z-index: 0; /* Behind the links */
+    opacity: 0.4; /* Slight transparency */
+    animation: gradientAnimation 6s ease infinite; /* Animation for background */
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+nav a {
+    font-family: monospace;
+    color: #fff; /* White text for contrast */
+    padding: 12px 25px;
+    margin: 0 15px;
+    text-decoration: none;
+    border-radius: 25px; /* Rounded buttons */
+    position: relative; /* For the hover effect */
+    overflow: hidden; /* Hides overflow */
+    transition: color 0.3s, transform 0.3s; /* Smooth transitions */
+    font-size: 16px; /* Font size */
+    text-transform: uppercase; /* Uppercase text for style */
+    font-weight: bold; /* Bold text for emphasis */
+}
+
+nav a::before {
+    content: '';
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    width: 300%; /* Start larger */
+    height: 300%; /* Start larger */
+    background: rgba(255, 255, 255, 0.1); /* Light overlay */
+    border-radius: 50%; /* Circular effect */
+    transform: translate(-50%, -50%) scale(0); /* Initially hidden */
+    transition: transform 0.3s; /* Smooth scaling */
+    z-index: 0; /* Behind the text */
+}
+
+nav a:hover::before {
+    transform: translate(-50%, -50%) scale(1); /* Expand on hover */
+}
+
+nav a:hover {
+    color: #49abd8; /* Gold color on hover */
+    transform: scale(1.1); /* Slightly increase size on hover */
+}
+
+nav a.active {
+    background: linear-gradient(90deg, #007acc, #00509e); /* Gradient for active link */
+    color: #fff; /* Ensure active link text is visible */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* Glow effect for active */
+}
+        label {
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace; 
+            font-weight: bold;/* Dark black label color */
+        }
+        .form-control {
+            background-color: #ffffff; /* White background for input fields */
+            color: #333; /* Dark text in inputs */
+            border: 1px solid #ccc; /* Light border */
+        }
+        .form-control:focus {
+            background-color: #ffffff; /* Keep white on focus */
+            border-color: #007bff; /* Blue border on focus */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a blue shadow on focus */
+        }
+        button {
+            background-color: #ffffff; /* White button color */
+            color: #f11325; /* Dark blue text */
+        }
+        button:hover {
+            background-color: #e6e6e6; /* Light grey on hover */
+        }
+        .messages {
+            margin-top: 15px;
+            color: #dc3545; /* Red for error messages */
+        }
+    </style>
 </head>
 <body>
+    <nav>
+        <a href="{% url 'welcome' %}" class="active">Home</a>
+        <a href="{% url 'address_list' %}">Address List</a>
+        <a href="{% url 'return_address_list' %}">Return Address List</a>
+        <a href="{% url 'monthly_copies_summary' %}">Magazine Summary List</a>
+        <a href="{% url 'magazine_details' %}">magazine details</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+   
     <div class="container">
-        <h1>Create/Edit Address</h1>
-
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
-        <form id="address-form" method="post" action="{% url 'address_list' %}">
+        <h2>Create New Address</h2>
+        <form method="POST" action="{% url 'address_create' %}">
             {% csrf_token %}
-            <div>
-                <label for="s_no">S.No:</label>
-                <input type="number" id="s_no" name="s_no" required>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="region">Region</label>
+                    <select id="region" name="region" class="form-control" required>
+                        <option value="">Select Region</option>
+                        <option value="North">North</option>
+                        <option value="South">South</option>
+                        <option value="West">West</option>
+                        <option value="East">East</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="categories">Categories</label>
+                    <select id="categories" name="categories" class="form-control" required>
+                        <option value="">Select Category</option>
+                        <option value="Member">Member</option>
+                        <option value="Advertiser">Advertiser</option>
+                        <option value="Visitor">Visitor</option>
+                        <option value="Association">Association</option>
+                    </select>
+                </div>
             </div>
-
-            <div>
-                <label for="region">Region:</label>
-                <input type="text" id="region" name="region" value="{{ request.POST.region|default:'' }}" required>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="postal_dtdc">Postal DTDC</label>
+                    <select id="postal_dtdc" name="postal_dtdc" class="form-control" required>
+                        <option value="">Select P/D</option>
+                        <option value="P">P</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="person_name">Person Name</label>
+                    <input type="text" id="person_name" name="person_name" class="form-control" required>
+                </div>
             </div>
-
-            <div>
-                <label for="categories">Categories:</label>
-                <select id="categories" name="categories" required>
-                    <option value="">--Select--</option>
-                    <option value="Association" {% if request.POST.categories == 'Association' %}selected{% endif %}>Association</option>
-                    <option value="Advertiser" {% if request.POST.categories == 'Advertiser' %}selected{% endif %}>Advertiser</option>
-                    <option value="Visitors" {% if request.POST.categories == 'Visitors' %}selected{% endif %}>Visitors</option>
-                </select>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="company_name">Company Name</label>
+                    <input type="text" id="company_name" name="company_name" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="address">Address</label>
+                    <textarea id="address" name="address" class="form-control" required></textarea>
+                </div>
             </div>
-
-            <div>
-                <label for="postal_dtdc">Postal / DTDC:</label>
-                <input type="text" id="postal_dtdc" name="postal_dtdc" value="{{ request.POST.postal_dtdc|default:'' }}" required>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="phone_number">Phone Number</label>
+                    <input type="tel" id="phone_number" name="phone_number" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="copies">Copies</label>
+                    <input type="number" id="copies" name="copies" min="1" class="form-control">
+                </div>
             </div>
-
-            <div>
-                <label for="person_name">Person Name:</label>
-                <input type="text" id="person_name" name="person_name" value="{{ request.POST.person_name|default:'' }}" required>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="receiver_name">Receiver Name</label>
+                    <input type="text" id="receiver_name" name="receiver_name" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="email_id">Email ID</label>
+                    <input type="email" id="email_id" name="email_id" class="form-control" required>
+                </div>
             </div>
-
-            <div>
-                <label for="company_name">Company Name:</label>
-                <input type="text" id="company_name" name="company_name" value="{{ request.POST.company_name|default:'' }}">
-            </div>
-
-            <div>
-                <label for="address">Address:</label>
-                <textarea id="address" name="address" required>{{ request.POST.address|default:'' }}</textarea>
-            </div>
-
-            <div>
-                <label for="phone_number">Phone Number:</label>
-                <input type="tel" id="phone_number" name="phone_number" pattern="[0-9]{10}" value="{{ request.POST.phone_number|default:'' }}" required>
-                <small>Format: 10-digit number</small>
-            </div>
-
-            <div>
-                <label for="receiver_name">Receiver Name:</label>
-                <input type="text" id="receiver_name" name="receiver_name" value="{{ request.POST.receiver_name|default:'' }}" required>
-            </div>
-
-            <div>
-                <label for="email_id">Email ID:</label>
-                <input type="email" id="email_id" name="email_id" value="{{ request.POST.email_id|default:'' }}" required>
-            </div>
-
-            <div>
-                <button type="submit">Submit</button>
-            </div>
+            <button type="submit" class="btn btn-primary btn-block">Add Address</button>
         </form>
-
-        <a href="{% url 'address_list' %}" onclick="goBack()">Back to Address List</a>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
-
-    <script src="{% static 'js/script.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

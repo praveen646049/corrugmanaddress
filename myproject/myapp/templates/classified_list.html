@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classifieds List</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background color */
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+        }
+        .table-container {
+            background-color: #ffffff; /* White background for the table box */
+            padding: 2rem; /* Padding inside the table box */
+            border-radius: 0.5rem; /* Rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+        .header-buttons {
+            display: flex;
+            justify-content: space-between; /* Space between buttons */
+            margin-bottom: 20px; /* Spacing below the buttons */
+        }
+        .h1 {
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Classifieds</h1>
+        <div class="header-buttons">
+            <a href="{% url 'classified_create' %}" class="btn btn-success">Create New Classified</a>
+            <a href="{% url 'magazine_details' %}" class="btn btn-info">Magazine Details</a>
+        </div>
+        <div class="table-container">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">S.No</th>
+                        <th scope="col">Customer Name</th>
+                        <th scope="col">Company Name</th>
+                        <th scope="col">Designation</th>
+                        <th scope="col">Edition</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for classified in classifieds %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ classified.customer_name }}</td>
+                        <td>{{ classified.company_name }}</td>
+                        <td>{{ classified.designation }}</td>
+                        <td>{{ classified.edition }}</td>
+                        <td>
+                            <a href="{% url 'classified_update' classified.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="{% url 'classified_delete' classified.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
