@@ -362,14 +362,6 @@ def download_pdf(request):
 
     return response
 
-# views.py
-from io import BytesIO
-from django.http import HttpResponse
-from django.shortcuts import render
-from docx import Document
-from .models import Address  # Import your Address model
-
-# views.py
 from io import BytesIO
 from django.http import HttpResponse
 from django.shortcuts import render

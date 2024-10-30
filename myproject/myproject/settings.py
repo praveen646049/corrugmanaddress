@@ -104,20 +104,13 @@ DATABASES = {
 # }
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'corrugmanaddress',
-#         'USER': 'corrugmanuser',
-#         'PASSWORD': 'corrugmanuser',
-#         'HOST': 'localhost',
-#         'PORT': '5432', 
-#         'OPTIONS': {
-#             'sslmode': 'require',  # Add this if SSL is required
-#         },
-#            # or your db port
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",  # Add your static files directory here
